@@ -28,13 +28,13 @@ func OpenDBConnection() (*sql.DB, error) {
 
 }
 
-func InsertStockPrice(db *sql.DB, ticker string, open float64, close float64, high float64, low float64, volume int) {
+func InsertStockPrice(db *sql.DB, stock *models.StockPrice) {
 	command := "INSERT INTO DailyStockPrices (Ticker, Open, Close, High, Low, Volume, Date) VALUES (?, ?, ?, ?, ?, ?, CURDATE())"
-	_, err := db.Exec(command, ticker, open, close, high, low, volume)
+	_, err := db.Exec(command, stock.Ticker, stock.Open, stock.Close, stock.High, stock.Low, stock.Volume)
 	if err != nil {
 		log.Fatal(err)
 	} else {
-		fmt.Printf("Inserted %f for %s sucessfully\n", close, ticker)
+		fmt.Printf("Inserted %f for %s sucessfully\n", stock.Close, stock.Ticker)
 	}
 
 }

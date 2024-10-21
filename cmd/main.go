@@ -26,7 +26,7 @@ func main() {
 		stockPrice, _ := internal.ParseHTML(content)
 		stockPrice.Ticker = ticker.Ticker
 
-		data.InsertStockPrice(db, ticker.Ticker, 0, stockPrice.Close, stockPrice.High, stockPrice.Low, 0)
+		data.InsertStockPrice(db, stockPrice)
 		fmt.Println(stockPrice.Close)
 	}
 }

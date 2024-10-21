@@ -130,7 +130,7 @@ func ParseHTML(httpResponse *http.Response) (*models.StockPrice, error) {
 
 func convertVolumeStr(strVol string) int64 {
 
-	var multiplier int64
+	var multiplier float64
 
 	if strings.Contains(strVol, "M") {
 		multiplier = 1000000
@@ -138,13 +138,13 @@ func convertVolumeStr(strVol string) int64 {
 		multiplier = 1000000000
 	}
 
-	volStr := strings.Replace(strVol, ",", "", -1)
+	volStr := strings.Replace(strVol, ",", ".", -1)
 	volStr = strings.Replace(volStr, "$ ", "", -1)
 	volStr = strings.Replace(volStr, " M", "", -1)
 	volStr = strings.Replace(volStr, " B", "", -1)
-	v, _ := strconv.ParseInt(volStr, 10, 64)
+	v, _ := strconv.ParseFloat(volStr, 64)
 
-	return v * multiplier
+	return int64(v * multiplier)
 }
 
 func extractInnerText(n *html.Node) string {
