@@ -7,7 +7,7 @@ This application stores their data into a MySQL Database which the following mod
 
 Also this aplication is desined to run as CronJobs at kubernetes 
 
-```
+```yaml
 apiVersion: batch/v1
 kind: CronJob
 metadata:
