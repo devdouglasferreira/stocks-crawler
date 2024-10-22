@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/devdouglasferreira/stockscrawler/internal"
 	"github.com/devdouglasferreira/stockscrawler/internal/data"
@@ -16,6 +16,8 @@ func main() {
 	}
 	tickers := data.GetActiveTickers(db)
 
+	args := os.Args[0]
+
 	for _, ticker := range tickers {
 
 		content, err := internal.FetchURL(ticker.SourceUrl)
@@ -26,7 +28,10 @@ func main() {
 		stockPrice, _ := internal.ParseHTML(content)
 		stockPrice.Ticker = ticker.Ticker
 
-		data.InsertStockPrice(db, stockPrice)
-		fmt.Println(stockPrice.Close)
+		if args == "--daily" {
+			data.InsertStockPrice(db, stockPrice)
+		} else {
+			data.InsertIntraDayStockPrice(db, stockPrice)
+		}
 	}
 }
