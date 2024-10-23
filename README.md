@@ -1,5 +1,5 @@
 This is a crawler application written in golang which uses 'https://www.infomoney.com.br' as datasource to extract stock prices daily in ochlv format 
-and extract intra day prices in m15 period
+and extract intra day prices in m15 period. If you intend change the data source you must change the whole crawler logic.
 
 This application stores their data into a MySQL Database which the following model
 
@@ -8,6 +8,7 @@ This application stores their data into a MySQL Database which the following mod
 Also this aplication is desined to run as CronJobs at kubernetes 
 
 ```yaml
+# stocks-crawler-cronjob.yaml
 apiVersion: batch/v1
 kind: CronJob
 metadata:
