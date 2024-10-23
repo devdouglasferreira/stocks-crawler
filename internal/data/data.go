@@ -40,14 +40,21 @@ func InsertStockPrice(db *sql.DB, stock *models.StockPrice) {
 }
 
 func InsertIntraDayStockPrice(db *sql.DB, stock *models.StockPrice) {
-	command := "INSERT INTO IntraDayStockPrices (Ticker, Open, Value, High, Low, Volume, `DateTime`) VALUES (?, ?, ?, ?, ?, ?, NOW())"
-	_, err := db.Exec(command, stock.Ticker, stock.Open, stock.Close, stock.High, stock.Low, stock.Volume)
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		fmt.Printf("Inserted %f for %s sucessfully\n", stock.Close, stock.Ticker)
-	}
+	query := "SELECT Value FROM IntraDayStockPrices WHERE Ticker = ? ORDER BY `DateTime` DESC LIMIT 1"
 
+	var lastStockValue float64
+	rows := db.QueryRow(query, stock.Ticker)
+	rows.Scan(&lastStockValue)
+
+	if stock.Close != lastStockValue {
+		command := "INSERT INTO IntraDayStockPrices (Ticker, Open, Value, High, Low, Volume, `DateTime`) VALUES (?, ?, ?, ?, ?, ?, NOW())"
+		_, err := db.Exec(command, stock.Ticker, stock.Open, stock.Close, stock.High, stock.Low, stock.Volume)
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			fmt.Printf("Inserted %f for %s sucessfully\n", stock.Close, stock.Ticker)
+		}
+	}
 }
 
 func GetActiveTickers(db *sql.DB) []models.TrackedTicker {

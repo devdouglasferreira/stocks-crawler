@@ -16,8 +16,6 @@ func main() {
 	}
 	tickers := data.GetActiveTickers(db)
 
-	args := os.Args[0]
-
 	for _, ticker := range tickers {
 
 		content, err := internal.FetchURL(ticker.SourceUrl)
@@ -27,11 +25,11 @@ func main() {
 
 		stockPrice, _ := internal.ParseHTML(content)
 		stockPrice.Ticker = ticker.Ticker
-
-		if args == "--daily" {
-			data.InsertStockPrice(db, stockPrice)
+		mode := os.Getenv("CRAWLER_MODE")
+		if mode == "daily" {
+			go data.InsertStockPrice(db, stockPrice)
 		} else {
-			data.InsertIntraDayStockPrice(db, stockPrice)
+			go data.InsertIntraDayStockPrice(db, stockPrice)
 		}
 	}
 }
