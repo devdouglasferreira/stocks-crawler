@@ -46,7 +46,7 @@ func InsertIntraDayStockPrice(db *sql.DB, stock *models.StockPrice) {
 	rows := db.QueryRow(query, stock.Ticker)
 	rows.Scan(&lastStockValue)
 
-	if stock.Close != lastStockValue {
+	if stock.Close != lastStockValue && stock.Close != 0 {
 		command := "INSERT INTO IntraDayStockPrices (Ticker, Open, Value, High, Low, Volume, `DateTime`) VALUES (?, ?, ?, ?, ?, ?, NOW())"
 		_, err := db.Exec(command, stock.Ticker, stock.Open, stock.Close, stock.High, stock.Low, stock.Volume)
 		if err != nil {
@@ -54,6 +54,8 @@ func InsertIntraDayStockPrice(db *sql.DB, stock *models.StockPrice) {
 		} else {
 			fmt.Printf("Inserted %f for %s sucessfully\n", stock.Close, stock.Ticker)
 		}
+	} else {
+		fmt.Printf("Equal value to previous entry or zero. No new value to insert for %s\n", stock.Ticker)
 	}
 }
 
@@ -79,7 +81,6 @@ func GetActiveTickers(db *sql.DB) []models.TrackedTicker {
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		tickers = append(tickers, models.TrackedTicker{Ticker: ticker, SourceUrl: sourceUrl})
 	}
 
